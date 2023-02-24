@@ -1,21 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import {MongoClient} from "mongodb";
 import bcrypt from "bcrypt";
-
-let mongo;
-let client;
-export async function context(headers, secrets) {
-  if (!mongo) {
-  client = await MongoClient.connect(secrets.MONGO_URL);
-  mongo = client.db("test");
-}
-return {
-  headers,
-  secrets,
-  mongo,
-};
-};
 
 
 
@@ -88,11 +73,17 @@ const resolvers = {
       const existingUser = await Users.findOne({ name });
 
       if (existingUser) {
-        throw new Error('name already used');
+        throw new Error('Name already used');
       }
       
-      // TODO: Make this real
-      return TEMP_USER; 
+      const hash = await bcrypt.hash(pass, 10);
+      await Users.insert({
+        name,
+        password: hash,
+      });
+      const user = await Users.findOne({ name });
+
+      return user; 
     },
   },
 };
