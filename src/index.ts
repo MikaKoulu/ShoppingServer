@@ -2,8 +2,6 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import bcrypt from "bcrypt";
 
-const resolvers = require ("./resolvers")
-
 
 
 
@@ -55,6 +53,28 @@ const books = [
     author: 'Paul Auster',
   },
 ];
+
+
+// Resolvers define how to fetch the types defined in your schema.
+// This resolver retrieves books from the "books" array above.
+const resolvers = {
+  Query: {
+    books: () => books,
+    currentUser: () => {
+      return TEMP_USER;
+    },
+  },
+  Mutation: {
+    login: (root, { name, pass }) => {
+      // TODO: Make this real
+      return TEMP_USER;
+    },
+    signup: (root, { name, pass }) => {
+      // TODO: Make this real
+      return TEMP_USER;
+    },
+  },
+};
 
 
 // The ApolloServer constructor requires two parameters: your schema
