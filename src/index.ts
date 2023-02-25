@@ -2,6 +2,9 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import bcrypt from "bcrypt";
 
+const resolvers = require ("./resolvers")
+
+
 
 
 // A schema is a collection of type definitions (hence "typeDefs")
@@ -54,46 +57,13 @@ const books = [
 ];
 
 
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-const resolvers = {
-  Query: {
-    books: () => books,
-    currentUser: () => {
-      return TEMP_USER;
-    },
-  },
-  Mutation: {
-    login: (root, { name, pass }) => {
-      // TODO: Make this real
-      return TEMP_USER;
-    },
-    signup: async (root, { name, pass }, { mongo }) => {
-      const Users = mongo.collection('users');
-      const existingUser = await Users.findOne({ name });
-
-      if (existingUser) {
-        throw new Error('Name already used');
-      }
-      
-      const hash = await bcrypt.hash(pass, 10);
-      await Users.insert({
-        name,
-        password: hash,
-      });
-      const user = await Users.findOne({ name });
-
-      return user; 
-    },
-  },
-};
-
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
+
 
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
 //  1. creates an Express app
