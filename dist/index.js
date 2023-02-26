@@ -12,13 +12,30 @@ const typeDefs = `#graphql
     author: String
   }
 
+
+  type User {
+    _id: String
+    name: String
+    pass: String
+  }
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
     books: [Book]
+    currentUser: User
+  }
+
+  type Mutation {
+    login(name: String!, pass: String!): User
+    signup(name: String!, pass: String!): User
   }
 `;
+const TEMP_USER = {
+    _id: "1",
+    name: "Test",
+    pass: "1234"
+};
 const books = [
     {
         title: 'The Awakening',
@@ -34,6 +51,19 @@ const books = [
 const resolvers = {
     Query: {
         books: () => books,
+        currentUser: () => {
+            return TEMP_USER;
+        },
+    },
+    Mutation: {
+        login: (root, { name, pass }) => {
+            // TODO: Make this real
+            return TEMP_USER;
+        },
+        signup: (root, { name, pass }) => {
+            // TODO: Make this real
+            return TEMP_USER;
+        },
     },
 };
 // The ApolloServer constructor requires two parameters: your schema
